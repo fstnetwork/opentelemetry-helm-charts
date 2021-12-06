@@ -14,38 +14,38 @@ At this point, it has [OpenTelemetry Collector](https://github.com/open-telemetr
 In Kubernetes, in order for the API server to communicate with the webhook component, the webhook requires a TLS
 certificate that the API server is configured to trust. There are three ways for you to generate the required TLS certificate.
 
-  - The easiest and default method is to install the [cert-manager](https://cert-manager.io/docs/) and set `admissionWebhooks.certManager.enabled` to `true`.
-    In this way, cert-manager will generate a self-signed certificate. _See [cert-manager installation](https://cert-manager.io/docs/installation/kubernetes/) for more details._
-  - You can also provide your own Issuer by configuring the `admissionWebhooks.certManager.issuerRef` value. You will need
-    to specify the `kind` (Issuer or ClusterIssuer) and the `name`. Note that this method also requires the installation of cert-manager.
-  - The last way is to manually modify the secret where the TLS certificate is stored. Make sure you set `admissionWebhooks.certManager.enabled` to `false` first.
-    - Create the namespace for the OpenTelemetry Operator and the secret
-      ```console
-      $ kubectl create namespace opentelemetry-operator-system
-      ```
-    - Config the TLS certificate using `kubectl create` command
-      ```console
-      $ kubectl create secret tls opentelemetry-operator-controller-manager-service-cert \
-          --cert=path/to/cert/file \
-          --key=path/to/key/file \
-          -n opentelemetry-operator-system
-      ```
-      You can also do this by applying the secret configuration.
-      ```console
-      $ kubectl apply -f - <<EOF
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: opentelemetry-operator-controller-manager-service-cert
-        namespace: opentelemetry-operator-system
-      type: kubernetes.io/tls
-      data:
-        tls.crt: |
-            # your signed cert
-        tls.key: |
-            # your private key
-      EOF
-      ```
+- The easiest and default method is to install the [cert-manager](https://cert-manager.io/docs/) and set `admissionWebhooks.certManager.enabled` to `true`.
+  In this way, cert-manager will generate a self-signed certificate. _See [cert-manager installation](https://cert-manager.io/docs/installation/kubernetes/) for more details._
+- You can also provide your own Issuer by configuring the `admissionWebhooks.certManager.issuerRef` value. You will need
+  to specify the `kind` (Issuer or ClusterIssuer) and the `name`. Note that this method also requires the installation of cert-manager.
+- The last way is to manually modify the secret where the TLS certificate is stored. Make sure you set `admissionWebhooks.certManager.enabled` to `false` first.
+  - Create the namespace for the OpenTelemetry Operator and the secret
+    ```console
+    $ kubectl create namespace opentelemetry-operator-system
+    ```
+  - Config the TLS certificate using `kubectl create` command
+    ```console
+    $ kubectl create secret tls opentelemetry-operator-controller-manager-service-cert \
+        --cert=path/to/cert/file \
+        --key=path/to/key/file \
+        -n opentelemetry-operator-system
+    ```
+    You can also do this by applying the secret configuration.
+    ```console
+    $ kubectl apply -f - <<EOF
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: opentelemetry-operator-controller-manager-service-cert
+      namespace: opentelemetry-operator-system
+    type: kubernetes.io/tls
+    data:
+      tls.crt: |
+          # your signed cert
+      tls.key: |
+          # your private key
+    EOF
+    ```
 
 ## Add Repository
 
@@ -210,7 +210,9 @@ EOF
 ```
 
 ### StatefulSet Mode
+
 There are basically three main advantages to deploy the Collector as the StatefulSet:
+
 - Predictable names of the Collector instance will be expected \
   If you use above two approaches to deploy the Collector, the pod name of your Collector instance will be unique (its name plus random sequence).
   However, each Pod in a StatefulSet derives its hostname from the name of the StatefulSet and the ordinal of the Pod (my-col-0, my-col-1, my-col-2, etc.).
@@ -250,6 +252,7 @@ EOF
 ```
 
 ### Sidecar Mode
+
 The biggest advantage of the sidecar mode is that it allows people to offload their telemetry data as fast and reliable as possible from their applications.
 This Collector instance will work on the container level and no new pod will be created, which is perfect to keep your Kubernetes cluster clean and easily to be managed.
 Moreover, you can also use the sidecar mode when you want to use a different collect/export strategy, which just suits this application.

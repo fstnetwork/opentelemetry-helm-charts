@@ -42,6 +42,7 @@ admissionWebhooks:
   ## By default, OpenTelemetry Operator will use self-signer issuer.
   certManager:
     enabled: true
-    issuerRef: {}
+    issuerRef:
+      {}
       # kind:
       # mame:
