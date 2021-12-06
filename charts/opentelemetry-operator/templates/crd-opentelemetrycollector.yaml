@@ -12,7 +12,7 @@ spec:
             clientConfig:
                 caBundle: Cg==
                 service:
-                    name: webhook-service
+                    name: {{ template "opentelemetry-operator.name" . }}-webhook-service
                     namespace: {{ template "opentelemetry-operator.namespace" . }}
                     path: /convert
                     port: 443
