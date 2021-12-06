@@ -1,0 +1,13 @@
+***************
+*** 24,28 ****
+  Define the namespace where the resources in the chart will be installed.
+  */}}
+  {{- define "opentelemetry-operator.namespace" -}}
+- opentelemetry-operator-system
+  {{- end -}}
+--- 24,28 ----
+  Define the namespace where the resources in the chart will be installed.
+  */}}
+  {{- define "opentelemetry-operator.namespace" -}}
++ {{ .Release.Namespace }}
+  {{- end -}}
